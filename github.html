@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Big</title>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+  <link href='assets/css/big.css' rel='stylesheet' type='text/css' />
+  <link rel="stylesheet" type="text/css" href="assets/css/gitgraph.css" />
+  <script src="assets/js/gitgraph.min.js"></script>
+  <script src='assets/js/jquery.min.js'></script>
+  <script src='assets/js/big.js'>
+  </script>
+</head>
+<body>
+  <div>GitHub <br /><span class="subhead">for version control</span></div>
+  <div>version control: <em>track changes</em> for a whole project</div>
+  <div>Google Docs is entirely <em>synchronous</em></div>
+  <div>emailing a <code>.docx</code> is entirely <em>asynchronous</em></div>
+  <div><code>git</code></div>
+  <div data-bodyclass="gitGraph"><canvas id="gitGraph"></canvas></div>
+  <div><code>git</code> remembers the project's entire history</div>
+  <div>a <em>commit</em> is a save point for one or more files</div>
+  <div>a <em>branch</em> is a chronological batch of commits</div>
+  <div>multiple branches means <em>parallel</em> work on multiple features</div>
+  <div>when a feature is ready, it can be <em>merged</em> into the main branch</div>
+  <div>commits are <em>pushed</em> to a central repository for the project</div>
+  <div class="center">GitHub</div>
+  <div>those repos have to be hosted somewhere; GitHub provides that</div>
+  <div>GitHub also provides extra project management tools</div>
+  <div>issues</div>
+  <div>pull requests</div>
+  <div>continuous integration</div>
+  <div><code>README.md</code> rendering</div>
+  <div>collaborator control</div>
+  <div>the end!</div>
+</body>
+</html>
+<script>
+  var gitgraph = new GitGraph({template: {
+      colors: [ "#ffffff", "#ff0000", "#0003ff", "#00ff00" ],
+      branch: {
+        lineWidth: 7,
+        spacingX: 50,
+        showLabel: true
+      },
+      commit: {
+        spacingY: -80,
+        dot: {
+          size: 14
+        },
+        message: {
+          font: "normal 14pt Nimbus Sans L"
+        },
+        shouldDisplayTooltipsInCompactMode: false
+      }
+    },
+    orientation: "horizontal",
+    mode: "compact"
+  });
+  var master = gitgraph.branch("master");
+  var develop = gitgraph.branch("develop");
+  var feature1 = develop.branch("feature1");
+  var feature2 = develop.branch("feature2");
+  var running = false;
+  var paused = false;
+
+  var gitHistory = [
+    "develop.commit()",
+    "feature1.commit()",
+    "feature2.commit()"
+    // "develop.merge(master)",
+    // "feature1.merge(develop)",
+    // "feature2.merge(develop)"
+  ]
+
+  function runGraph() {
+    running = true;
+    var i = 0;
+    var interval = setInterval(function () {
+      if (!paused) {
+        if (i < 2) {
+          master.commit();
+        } else if (i < 4) {
+          develop.commit();
+        } else if ($("#gitGraph").width() < ($(window).width() - 150)) {
+          random = Math.floor(Math.random() * ((gitHistory.length) - 0)) + 0;
+          eval(gitHistory[random]);
+          if ((feature1.commits.length === 4) && (!feature1.merged)) {
+            feature1.merge(develop);
+            feature1.merged = true;
+          }
+          if ((feature2.commits.length === 5) && (!feature2.merged)) {
+            feature2.merge(develop);
+            feature2.merged = true;
+          }
+        } else {
+          develop.merge(master);
+          clearInterval(interval);
+          setTimeout(function () {
+            running = false;
+            runGit();
+          }, 2000);
+        }
+        i++;
+      }
+    }, 500);
+  }
+
+  function runGit() {
+    gitgraph = "";
+    gitgraph = new GitGraph({template: {
+        colors: [ "#ffffff", "#ff0000", "#0003ff", "#00ff00" ],
+        branch: {
+          lineWidth: 10,
+          spacingX: 50
+        },
+        commit: {
+          spacingY: -80,
+          dot: {
+            size: 14
+          },
+          message: {
+            font: "normal 14pt Arial"
+          }
+        }
+      },
+      orientation: "horizontal",
+      mode: "compact"
+    });
+    master = gitgraph.branch("master");
+    develop = master.branch("develop");
+    feature1 = develop.branch("feature1");
+    feature2 = develop.branch("feature2");
+    runGraph();
+  }
+
+  $(window).on('keyup keydown click', function(event) {
+    if (typeof interval !== 'undefined') {
+      clearInterval(interval);
+    }
+    if ((big.current === 5) && (!running)) {
+      runGit();
+    }
+  });
+
+  $(window).on('keyup', function(event) {
+    if (event.keyCode === 32) {
+      paused = !paused
+    }
+  })
+</script>
