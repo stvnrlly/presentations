@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Big</title>
+  <title>Hello, World</title>
   <meta charset='utf-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
   <link href='assets/css/big.css' rel='stylesheet' type='text/css' />
@@ -198,7 +198,6 @@
         if (c.type === 'input') {
           input = true
           $("#"+id).append("<p id='current'>$</p>");
-          // $("#"+id+" p:first-child").remove();
           var character = 0;
           var typing = setInterval(function () {
             if (character <= c.text.length) {
@@ -212,7 +211,6 @@
           }, 50);
         } else {
           $("#"+id).append("<p class='output'>"+c.text+"</p>");
-          // $("#"+id+" p:first-child").remove();
         }
         i++;
       } else if (i >= commands.length) {
@@ -223,22 +221,16 @@
   }
 
   $(window).on('keyup click', function(event) {
-    // if (typeof interval !== 'undefined') {
-    //   clearInterval(interval);
-    // }
     if ($("#"+big.current+" > pre").hasClass("terminal") && (!running)) {
-      // if (typeof interval !== 'undefined') {
-      //   clearInterval(interval);
-      // }
-      // if (typeof typing !== 'undefined') {
-      //   clearInterval(typing);
-      // }
+      if (typeof interval !== 'undefined') {
+        clearInterval(interval);
+      }
+      if (typeof typing !== 'undefined') {
+        clearInterval(typing);
+      }
       id = $("#"+big.current+" > pre").attr("id")
       runTerminal(eval(id), id);
     }
-    // if ((big.current === 5) && (!running)) {
-    //   runGit();
-    // }
   });
 </script>
 </html>
