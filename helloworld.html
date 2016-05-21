@@ -7,6 +7,7 @@
   <link href='assets/css/big.css' rel='stylesheet' type='text/css' />
   <script src='assets/js/big.js'></script>
   <script src='assets/js/jquery.min.js'></script>
+  <script src='assets/js/terminal.js'></script>
 </head>
 <body>
   <div>Hello, World<br /><span class="subhead"></span></div>
@@ -19,6 +20,16 @@
     </pre>
   </div>
   <div><pre class="terminal" id="versions"></pre></div>
+  <div>major vs. minor versions</div>
+  <div>
+    <p>2.<em>7</em>.9</p>
+    <p>minor: features added</p>
+  </div>
+  <div>
+    <p><em>2</em>.7.9</p>
+    <p>major: breaking changes</p>
+  </div>
+  <div>a version manager can help with this</div>
   <div>create a dev folder
     <pre>
       mkdir -p dev
@@ -33,6 +44,7 @@
       touch hello_world.js
     </pre>
   </div>
+  <div><pre class="terminal" id="ls"></pre></div>
   <div>open the text editor
     <pre>
       atom .
@@ -41,12 +53,7 @@
   <div>python</div>
   <div>in hello_world.py:
     <pre>
-      print("Hello, World")
-    </pre>
-  </div>
-  <div>in the terminal:
-    <pre>
-      python hello_world.py
+      print "Hello, World"
     </pre>
   </div>
   <div><pre class="terminal" id="py_hello"></pre></div>
@@ -56,21 +63,11 @@
       puts "Hello, World"
     </pre>
   </div>
-  <div>in the terminal:
-    <pre>
-      ruby hello_world.rb
-    </pre>
-  </div>
   <div><pre class="terminal" id="rb_hello"></pre></div>
   <div>node</div>
   <div>in hello_world.js:
     <pre>
       console.log("Hello, World");
-    </pre>
-  </div>
-  <div>in the terminal:
-    <pre>
-      node hello_world.js
     </pre>
   </div>
   <div><pre class="terminal" id="node_hello"></pre></div>
@@ -166,6 +163,25 @@
     }
   ]
 
+  var ls = [
+    {
+      type: 'input',
+      text: 'ls'
+    },
+    {
+      type: 'output',
+      text: 'hello_world.js'
+    },
+    {
+      type: 'output',
+      text: 'hello_world.py'
+    },
+    {
+      type: 'output',
+      text: 'hello_world.rb'
+    }
+  ]
+
   var py_hello = [
     {
       type: 'input',
@@ -235,58 +251,6 @@
     }
   ]
 
-  var running = false;
 
-  function runTerminal(commands, id) {
-    running = true;
-    $("#"+id+" > p").remove();
-    for (c in commands) {
-      $("#"+id).append("<p>plenty of hidden text for spacing</p>")
-    }
-    big.go(big.current);
-    $("#"+id+" > p").remove();
-    var c = "";
-    var input = false;
-    var i = 0;
-    var interval = setInterval(function () {
-      if ((i < commands.length) && (!input)) {
-        c = commands[i];
-        if (c.type === 'input') {
-          input = true
-          $("#"+id).append("<p id='current'>$</p>");
-          var character = 0;
-          var typing = setInterval(function () {
-            if (character <= c.text.length) {
-              $("#current").text("$ "+c.text.slice(0,character));
-            } else {
-              $("#current").attr("id","");
-              input = false
-              clearInterval(typing);
-            }
-            character++
-          }, 50);
-        } else {
-          $("#"+id).append("<p class='output'>"+c.text+"</p>");
-        }
-        i++;
-      } else if (i >= commands.length) {
-        clearInterval(interval);
-        running = false;
-      }
-    }, 1000);
-  }
-
-  $(window).on('keyup click', function(event) {
-    if ($("#"+big.current+" > pre").hasClass("terminal") && (!running)) {
-      if (typeof interval !== 'undefined') {
-        clearInterval(interval);
-      }
-      if (typeof typing !== 'undefined') {
-        clearInterval(typing);
-      }
-      id = $("#"+big.current+" > pre").attr("id")
-      runTerminal(eval(id), id);
-    }
-  });
 </script>
 </html>
